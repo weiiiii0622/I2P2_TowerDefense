@@ -30,17 +30,23 @@
 // Army
 #include "BombArmy.hpp"
 #include "ArcherArmy.hpp"
+#include "TankArmy.hpp"
+
+//Spell
+#include "IceSpell.hpp"
 
 // Defense
 #include "CannonDefense.hpp"
+#include "IceTurretDefense.hpp"
 #include "WallDefense.hpp"
+#include "DeathTrapDefense.hpp"
 
 #define LEFT 0
 #define RIGHT 1
 #define UP 2
 #define DOWN 3
 #define WALL_SIZE 4
-#define MAX_ARMY_AMOUNT 6
+#define MAX_ARMY_AMOUNT 60
 
 // TODO 2 (4/8) : Add the BombArmy when click the imageButton and place it. You can search for the ArcherArmy to know where to add.
 
@@ -181,12 +187,12 @@ void PlayScene::OnMouseUp(int button, int mx, int my) {
 	if(x < 0 || x >= MapWidth || y < 0 || y >= MapHeight)
 	    return;
 	if (button & 1) {
-		if (!CheckOccupied(x, y)) {
+		if (!CheckOccupied(x, y) ||(preview && preview->id==10)) {
 			if (!preview)
 				return;
 
             ReduceAmount(preview->id);
-            int remainId = armyAmount[preview->id]> 0 ? preview->id : -1;
+            int remainId = armyAmount[preview->id]> 0 || spellAmount[preview->id] > 0 ? preview->id : -1;
 			// Remove Preview.
 			preview->GetObjectIterator()->first = false;
             UIGroup->RemoveObject(preview->GetObjectIterator());
@@ -210,6 +216,11 @@ void PlayScene::OnMouseUp(int button, int mx, int my) {
                     preview = new ArcherArmy(0, 0);
                 else if (remainId == 1)
                     preview = new BombArmy(0, 0);
+                else if (remainId == 2)
+                    preview = new TankArmy(0, 0);
+                
+                else if (remainId == 10)
+                    preview = new IceSpell(0, 0);
                 
                 preview->Position = Engine::GameEngine::GetInstance().GetMousePosition();
                 preview->Tint = al_map_rgba(255, 255, 255, 200);
@@ -301,6 +312,8 @@ void PlayScene::ReadMap() {
 		case '0': mapData.push_back(TILE_FLOOR); break;
 		case '1': mapData.push_back(TILE_WALL); break;
         case '2': mapData.push_back(TILE_CANNON); break;
+        case '3': mapData.push_back(TILE_ICE_TURRET); break;
+        case '4': mapData.push_back(TILE_DEATH_TRAP); break;
 		case '\n':
 		case '\r':
 			if (static_cast<int>(mapData.size()) / MapWidth != 0)
@@ -332,6 +345,12 @@ void PlayScene::ReadMap() {
                 case TILE_CANNON:
                     DefenseGroup->AddNewObject(new CannonDefense(j * BlockSize + BlockSize / 2, i * BlockSize + BlockSize / 2));
                     break;
+                case TILE_ICE_TURRET:
+                    DefenseGroup->AddNewObject(new IceTurretDefense(j * BlockSize + BlockSize / 2, i * BlockSize + BlockSize / 2));
+                    break;
+                case TILE_DEATH_TRAP:
+                    DefenseGroup->AddNewObject(new DeathTrapDefense(j * BlockSize + BlockSize / 2, i * BlockSize + BlockSize / 2));
+                    break;
                 case TILE_FLOOR:
                     if (j <= MapWidth-2 && j >= 2) {
                         if (mapState[i][j-2] == TILE_WALL && mapState[i][j-1] == TILE_WALL) {
@@ -356,21 +375,30 @@ void PlayScene::ConstructUI() {
 	UIGroup->AddNewObject(new Engine::Image("play/sand.png", 0, 64*MapHeight, 1536, 128));
 
     // TODO 2 (3/8) : Construct the select button for bomb army.
-    ConstructButton(0, ArmyImage[0]); // Warrior
-    ConstructButton(1, ArmyImage[1]); // Bombs
-
+    ConstructButton(0, 0, ArmyImage[0]); // Warrior
+    ConstructButton(0, 1, ArmyImage[1]); // Bombs
+    ConstructButton(0, 2, ArmyImage[2]); // Tank
+    
+    ConstructButton(0, 10, ArmyImage[10]); // Ice Spell
 }
-void PlayScene::ConstructButton(int id, std::string imageName) {
+
+// type 0:army / 1:spell
+void PlayScene::ConstructButton(int type, int id, std::string imageName) {
     ArmyButton* btn;
     // Button
-    btn = new ArmyButton("play/floor.png", "play/dirt.png",
-        Engine::Sprite(imageName, 175 + 120 * id, BlockSize * MapHeight + 10, 80, 80, 0, 0)
-        , 170 + 120 * id,  BlockSize * MapHeight, 0, id);
-    // Reference: Class Member Function Pointer and std::bind.
-    btn->SetOnClickCallback(std::bind(&PlayScene::UIBtnClicked, this, id));
-    UIGroup->AddNewControlObject(btn);
+
     // Button Label
-    AddNewObject(UIArmyAmount[id] = new Engine::Label("x" + std::to_string(armyAmount[id]), "pirulen.ttf", 20.5, 230 + 120 * id, BlockSize * MapHeight + 110, 0, 0, 0, 255, 0.5, 0.5));
+    if(type==0){
+        btn = new ArmyButton("play/floor.png", "play/dirt.png",
+            Engine::Sprite(imageName, 175 + 120 * id, BlockSize * MapHeight + 10, 80, 80, 0, 0)
+            , 170 + 120 * id,  BlockSize * MapHeight, 0, id);
+        // Reference: Class Member Function Pointer and std::bind.
+        btn->SetOnClickCallback(std::bind(&PlayScene::UIBtnClicked, this, id));
+        UIGroup->AddNewControlObject(btn);
+        
+        AddNewObject(UIArmyAmount[id] = new Engine::Label("x" + std::to_string(armyAmount[id]), "pirulen.ttf", 20.5, 230 + 120 * id, BlockSize * MapHeight + 110, 0, 0, 0, 255, 0.5, 0.5));
+    }
+
 }
 
 void PlayScene::UIBtnClicked(int id) {
@@ -379,13 +407,21 @@ void PlayScene::UIBtnClicked(int id) {
 		UIGroup->RemoveObject(preview->GetObjectIterator());
         preview = nullptr;
     }
-    
+    // Army
 	if (id == 0)
         preview = new ArcherArmy(0, 0);
     
-    if (id == 1)
+    else if (id == 1)
         preview = new BombArmy(0, 0);
-
+    
+    else if (id == 2)
+        preview = new TankArmy(0, 0);
+    
+    // Spell
+    else if (id == 10){
+        preview = new IceSpell(0, 0);
+        Engine::LOG() << "IceSpell Pressed" ;
+    }
 	if (!preview)
 		return;
     
@@ -404,7 +440,7 @@ bool PlayScene::CheckOccupied(int x, int y) {
         return true;
     
     TileType tt = mapState[y][x];
-    if (tt == TILE_WALL || tt == TILE_CANNON) return true;
+    if (tt == TILE_WALL || tt == TILE_CANNON || tt == TILE_ICE_TURRET || tt == TILE_DEATH_TRAP) return true;
     
     if (x >= corners[0].x && x <= corners[1].x
         && y >= corners[0].y && y <= corners[2].y
@@ -413,6 +449,7 @@ bool PlayScene::CheckOccupied(int x, int y) {
     return false;
 }
 
+// Army
 int PlayScene::GetArmyAmount(int id) {
     return armyAmount[id];
 }
@@ -427,6 +464,23 @@ int PlayScene::GetTotalArmyAmount() {
 
 void PlayScene::SetTotalArmyAmount(int total) {
     totalArmy = total;
+}
+
+// Spell
+int PlayScene::GetSpellAmount(int id) {
+    return spellAmount[id];
+}
+
+void PlayScene::SetSpellAmount(int id, int amount) {
+    spellAmount[id] = amount;
+}
+
+int PlayScene::GetTotalSpellAmount() {
+    return totalSpell;
+}
+
+void PlayScene::SetTotalSpellAmount(int total) {
+    totalSpell = total;
 }
 
 void PlayScene::ClearMapState(int x, int y) {

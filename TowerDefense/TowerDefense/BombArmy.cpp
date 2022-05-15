@@ -112,6 +112,6 @@ void BombArmy::Hit(float damage) {
         for (auto& it: lockedDefenses)
             it->Target = nullptr;
         getPlayScene()->ArmyGroup->RemoveObject(objectIterator);
-        //AudioHelper::PlayAudio("explosion.wav");
+        AudioHelper::PlayAudio("explosion.wav");
     }
 }

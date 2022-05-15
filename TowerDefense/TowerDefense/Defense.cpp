@@ -12,6 +12,7 @@
 #include "PlayScene.hpp"
 #include "Point.hpp"
 #include "Defense.hpp"
+#include "LOG.hpp"
 
 Defense::Defense(std::string imgDefense, float x, float y, float radius, float coolDown, int hp, int id, float shootRadius) :
     Role(imgDefense, x, y), coolDown(coolDown), id(id), shootRadius(shootRadius) {
@@ -34,6 +35,7 @@ void Defense::Hit(float damage) {
 }
 void Defense::Update(float deltaTime) {
     Sprite::Update(deltaTime);
+    //Engine::LOG()<<"Why am i here";
     PlayScene* scene = getPlayScene();
     if (!Enabled)
         return;
@@ -46,10 +48,14 @@ void Defense::Update(float deltaTime) {
         for (auto& it : scene->ArmyGroup->GetObjects()) {
             ey = static_cast<int>(floor(it->Position.y / PlayScene::BlockSize));
             if (InShootingRange(it->Position)) {
-                Target = dynamic_cast<Army*>(it);
-                Target->lockedDefenses.push_back(this);
-                lockedDefenseIterator = std::prev(Target->lockedDefenses.end());
-                break;
+                Army* tmp = dynamic_cast<Army*>(it); // To detarget spell
+                if(tmp->id != 10){
+                    Target = tmp;
+                    //Engine::LOG() << "Target id: " <<Target->id ;
+                    Target->lockedDefenses.push_back(this);
+                    lockedDefenseIterator = std::prev(Target->lockedDefenses.end());
+                    break;
+                }
             }
         }
     }
@@ -75,9 +81,11 @@ void Defense::Update(float deltaTime) {
         }
         // Shoot reload.
         reload -= deltaTime;
+        //Engine::LOG() << reload;
         if (reload <= 0) {
             // shoot.
             reload = coolDown;
+            Engine::LOG() << "Shoot";
             CreateBullet(Target->Position);
         }
     }
@@ -97,3 +105,15 @@ bool Defense::InShootingRange(Engine::Point obj) {
     return (pow(abs(x - obj.x), 2) + pow(abs(y - obj.y), 2) <= pow(shootRadius, 2));
 }
 
+void Defense::setReload(float t){
+    reload = t;
+    return;
+}
+
+float Defense::getCooldown(){
+    return coolDown;
+}
+
+float Defense::getReload(){
+    return reload;
+}

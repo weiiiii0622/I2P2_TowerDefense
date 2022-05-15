@@ -33,6 +33,8 @@ public:
     std::list<Defense*> lockedDefenses;
     int region;
     
+    bool isSlowed = false;
+    
     Army(std::string img, float x, float y, float radius, float coolDown, float speed, float hp, int id, float shootRadius);
     // Reference: Design Patterns - Factory Method.
     virtual void CreateBullet(Engine::Point pt) = 0;
@@ -43,6 +45,9 @@ public:
     int ManHattanDistance(Engine::Point target);
     void CalcRegion(int x, int y);
     float UpdateRotation(float deltaTime, Engine::Point target);
+    
+    void ChangeSpeed(float spd);
+    float GetSpeed();
 };
 
 #endif /* Army_hpp */

@@ -17,7 +17,8 @@
 void ArmySelectScene::Initialize() {
     // parameter initialization
     // TODO 2 (1/8): modify the totalArmy amount.
-    totalArmy = 2;
+    totalArmy = 3;
+    totalSpell = 1;
     
     // Space status background
     AddNewObject(new Engine::Image("play/sand.png", 1250, 0, 336, 896));
@@ -48,8 +49,17 @@ void ArmySelectScene::Initialize() {
     // TODO 2 (2/8): Create the bomb image. You can find image in the play/ folder.
     // Bombs
     armyAmount[1] = 0;
-    armyInitAmount[1] = 100;
+    armyInitAmount[1] = 4;
     ArmyImage[1] = "play/bombs.png";
+    
+    //Tank
+    armyAmount[2] = 0;
+    armyInitAmount[2] = 4;
+    ArmyImage[2] = "play/enemy-3.png";
+    
+    // Ice Spell
+    armyAmount[10] = 2;
+    ArmyImage[10] = "play/icecube.png";
     
     // Add new enemy
     for (int i=0; i<totalArmy; i++) {
@@ -96,9 +106,16 @@ void ArmySelectScene::PlayOnClick(ButtonType type, int id, int spaceCost) {
     if (type == BUTTON_ENTER) {
         PlayScene *scene = dynamic_cast<PlayScene*>(Engine::GameEngine::GetInstance().GetScene("play"));
         scene->SetTotalArmyAmount(totalArmy);
+        scene->SetTotalSpellAmount(totalSpell);
+        
         for (int i=0; i<totalArmy; i++) {
             scene->SetArmyAmount(i, armyAmount[i]);
             scene->ArmyImage[i] = ArmyImage[i];
+        }
+        
+        for(int i=0; i<totalSpell; i++){
+            scene->SetArmyAmount(i+10, armyAmount[i+10]);
+            scene->ArmyImage[i+10] = ArmyImage[i+10];
         }
 
         Engine::GameEngine::GetInstance().ChangeScene("play");

@@ -10,7 +10,8 @@
 #include "IScene.hpp"
 #include "Point.hpp"
 
-#define MAX_ARMY_AMOUNT 6
+#define MAX_ARMY_AMOUNT 60
+#define MAX_SPELL_AMOUNT 60
 #define WALL_SIZE 4
 
 class Defense;
@@ -29,6 +30,8 @@ private:
 		TILE_FLOOR,
         TILE_WALL,
         TILE_CANNON,
+        TILE_ICE_TURRET,
+        TILE_DEATH_TRAP,
 		TILE_OCCUPIED,
 	};
 	ALLEGRO_SAMPLE_ID bgmId;
@@ -40,6 +43,12 @@ protected:
     int armyAmount[MAX_ARMY_AMOUNT];
     // Total enemies;
     int totalArmy;
+    
+    // Spell Amounts
+    int spellAmount[MAX_SPELL_AMOUNT];
+    //Total Spells
+    int totalSpell;
+    
 public:
     bool mute;
 	static bool DebugMode;
@@ -65,6 +74,10 @@ public:
 	Group* UIGroup;
     std::string ArmyImage[MAX_ARMY_AMOUNT];
     Engine::Label *UIArmyAmount[MAX_ARMY_AMOUNT];
+    
+    std::string SpellImage[MAX_SPELL_AMOUNT];
+    Engine::Label *UISpellAmount[MAX_SPELL_AMOUNT];
+    
 	Engine::Image* imgTarget;
     Army* preview;
 	std::vector<std::vector<TileType>> mapState;
@@ -84,12 +97,20 @@ public:
     // get & set enemy amount
     int GetArmyAmount(int id);
     void SetArmyAmount(int id, int amount);
+    // get & set spell amount
+    int GetSpellAmount(int id);
+    void SetSpellAmount(int id, int amount);
     // get & set totalEnemy amount
     int GetTotalArmyAmount();
     void SetTotalArmyAmount(int total);
+    
+    // get & set totalSpell amount
+    int GetTotalSpellAmount();
+    void SetTotalSpellAmount(int total);
+    
 	void ReadMap();
 	void ConstructUI();
-    void ConstructButton(int id, std::string imageName);
+    void ConstructButton(int type, int id, std::string imageName);
 	void UIBtnClicked(int id);
     bool CheckOccupied(int x, int y);
     void ClearMapState(int x, int y);

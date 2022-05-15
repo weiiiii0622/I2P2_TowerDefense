@@ -4,6 +4,7 @@
 #include "Group.hpp"
 #include "IControl.hpp"
 #include "IObject.hpp"
+#include "Defense.hpp"
 
 namespace Engine {
 	void Group::addObject(bool shouldDelete, IObject* obj) {
@@ -34,7 +35,8 @@ namespace Engine {
 	void Group::Update(float deltaTime) {
 		for (auto it = objects.begin(); it != objects.end();) {
 			auto preIt = it++;
-			if (preIt->second->Visible)
+            Defense* tgt = dynamic_cast<Defense*>(preIt->second);
+			if (preIt->second->Visible || (tgt&&tgt->id == 4))
 				preIt->second->Update(deltaTime);
 		}
 	}

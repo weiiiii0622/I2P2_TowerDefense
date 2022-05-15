@@ -30,6 +30,10 @@ public:
     void Update(float deltaTime) override;
     void Draw() const override;
     bool InShootingRange(Engine::Point obj);
+    
+    void setReload(float t);
+    float getCooldown();
+    float getReload();
 };
 
 #endif /* Defense_hpp */

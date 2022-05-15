@@ -24,12 +24,15 @@ public:
     void OnKeyDown(int keyCode) override;
     
     std::string ArmyImage[MAX_ARMY_AMOUNT];
-    Engine::Label *UIArmyAmount[6];
+    std::string SpellImage[MAX_SPELL_AMOUNT];
+    Engine::Label *UIArmyAmount[MAX_ARMY_AMOUNT];
     Engine::Label *UISpaceUsage;
-    int armyAmount[6];
-    int armyInitAmount[6];
+    int armyAmount[MAX_ARMY_AMOUNT];
+    int armyInitAmount[MAX_ARMY_AMOUNT];
+    int spellAmount[MAX_SPELL_AMOUNT];
     int usedSpace, totalSpace;
     int totalArmy;
+    int totalSpell;
     bool mute = false;
     bool fromSetting = false;
 };

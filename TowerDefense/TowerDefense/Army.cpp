@@ -32,6 +32,9 @@
 
 Army::Army(std::string img, float x, float y, float radius, float coolDown, float speed, float hp, int id, float shootRadius) :
     Role(img, x, y), coolDown(coolDown), speed(speed), id(id), shootRadius(shootRadius) {
+        if(id==10){
+            Role(img, x+1, y+1);
+        }
     CollisionRadius = radius;
     HP = hp;
     reachEndTime = 0;
@@ -53,7 +56,7 @@ void Army::Hit(float damage) {
 void Army::Update(float deltaTime) {
     // PlayScene
     PlayScene* scene = getPlayScene();
-
+    //Engine::LOG() << "Hi Army";
     const int distThreshold = PlayScene::BlockSize / 32;
     
     if (isPreview) return ;
@@ -382,4 +385,13 @@ float Army::UpdateRotation(float deltaTime, Engine::Point target) {
         ret = atan2(rotation.y, rotation.x) + ALLEGRO_PI / 2;
     }
     return ret;
+}
+
+void Army::ChangeSpeed(float spd){
+    speed = spd;
+    return;
+}
+
+float Army::GetSpeed(){
+    return speed;
 }
