@@ -43,14 +43,22 @@ Army::Army(std::string img, float x, float y, float radius, float coolDown, floa
 }
 
 void Army::Hit(float damage) {
-    HP -= damage;
-    if (HP <= 0) {
-        OnExplode();
-        // Remove all Defense's reference to target.
-        for (auto& it: lockedDefenses)
-            it->Target = nullptr;
-        getPlayScene()->ArmyGroup->RemoveObject(objectIterator);
-        AudioHelper::PlayAudio("explosion.wav");
+    if(damage < 0){
+        if(HP - damage > max_HP) HP = max_HP;
+        else{
+            HP -= damage;
+        }
+    }
+    else{
+        HP -= damage;
+        if (HP <= 0) {
+            OnExplode();
+            // Remove all Defense's reference to target.
+            for (auto& it: lockedDefenses)
+                it->Target = nullptr;
+            getPlayScene()->ArmyGroup->RemoveObject(objectIterator);
+            AudioHelper::PlayAudio("explosion.wav");
+        }
     }
 }
 void Army::Update(float deltaTime) {
@@ -394,4 +402,9 @@ void Army::ChangeSpeed(float spd){
 
 float Army::GetSpeed(){
     return speed;
+}
+
+int Army::GetHP(){
+    if(this == nullptr) return -1;
+    return HP;
 }

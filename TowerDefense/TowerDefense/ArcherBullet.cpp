@@ -14,7 +14,7 @@ class Defense;
 
 //ArmyBullet::ArmyBullet(std::string img, float speed, float damage, Engine::Point position, Engine::Point forwardDirection, float rotation, Army* parent)
 ArcherBullet::ArcherBullet(Engine::Point position, Engine::Point forwardDirection, float rotation, Army* parent) :
-    ArmyBullet("play/sword.png", 40, 5, position, forwardDirection, rotation - ALLEGRO_PI / 2, parent) {
+    ArmyBullet("play/sword.png", 40, 10, position, forwardDirection, rotation - ALLEGRO_PI / 2, parent) {
 }
 
 void ArcherBullet::OnExplode(Defense *defense) {

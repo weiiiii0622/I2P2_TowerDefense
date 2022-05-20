@@ -85,7 +85,7 @@ void Defense::Update(float deltaTime) {
         if (reload <= 0) {
             // shoot.
             reload = coolDown;
-            Engine::LOG() << "Shoot";
+            //Engine::LOG() << "Shoot";
             CreateBullet(Target->Position);
         }
     }

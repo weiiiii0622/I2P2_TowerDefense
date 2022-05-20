@@ -31,6 +31,7 @@
 #include "BombArmy.hpp"
 #include "ArcherArmy.hpp"
 #include "TankArmy.hpp"
+#include "AngelArmy.hpp"
 
 //Spell
 #include "IceSpell.hpp"
@@ -142,9 +143,20 @@ void PlayScene::Update(float deltaTime) {
 	}
     
     // Win
-    if (DefenseGroup->GetObjects().empty()) {
-        Engine::GameEngine::GetInstance().ChangeScene("win");
+//    if (DefenseGroup->GetObjects().empty()) {
+//        Engine::GameEngine::GetInstance().ChangeScene("win");
+//    }
+    
+    std::list<IObject*> remain_defense = DefenseGroup->GetObjects();
+    bool win_flag = true;
+    for(auto tgt : remain_defense){
+        Defense *tmp = dynamic_cast<Defense*>(tgt);
+        if(tmp->id != 4){
+            win_flag = false;
+        }
     }
+    if(win_flag) Engine::GameEngine::GetInstance().ChangeScene("win");
+    
     
 	if (preview) {
 		preview->Position = Engine::GameEngine::GetInstance().GetMousePosition();
@@ -162,6 +174,7 @@ void PlayScene::OnMouseDown(int button, int mx, int my) {
 		preview = nullptr;
 	}
 	IScene::OnMouseDown(button, mx, my);
+    //Engine::LOG() << "preview id: "<<preview->id;
 }
 void PlayScene::OnMouseMove(int mx, int my) {
 	IScene::OnMouseMove(mx, my);
@@ -190,6 +203,7 @@ void PlayScene::OnMouseUp(int button, int mx, int my) {
 		if (!CheckOccupied(x, y) ||(preview && preview->id==10)) {
 			if (!preview)
 				return;
+            
 
             ReduceAmount(preview->id);
             int remainId = armyAmount[preview->id]> 0 || spellAmount[preview->id] > 0 ? preview->id : -1;
@@ -218,6 +232,11 @@ void PlayScene::OnMouseUp(int button, int mx, int my) {
                     preview = new BombArmy(0, 0);
                 else if (remainId == 2)
                     preview = new TankArmy(0, 0);
+                else if (remainId == 3){
+                    //Engine::LOG()<<"Hi angel";
+                    preview = new AngelArmy(0, 0);
+                }
+                    
                 
                 else if (remainId == 10)
                     preview = new IceSpell(0, 0);
@@ -228,7 +247,12 @@ void PlayScene::OnMouseUp(int button, int mx, int my) {
                 preview->isPreview = true;
                 UIGroup->AddNewObject(preview);
             }
-
+            
+            // Debug
+//            for(int i=0; i<totalArmy; i++){
+//                Engine::LOG() << "id: " << i << " amount: " << armyAmount[i];
+//            }
+            
 			OnMouseMove(mx, my);
 		}
 		else{
@@ -378,6 +402,7 @@ void PlayScene::ConstructUI() {
     ConstructButton(0, 0, ArmyImage[0]); // Warrior
     ConstructButton(0, 1, ArmyImage[1]); // Bombs
     ConstructButton(0, 2, ArmyImage[2]); // Tank
+    ConstructButton(0, 3, ArmyImage[3]); // Angel
     
     ConstructButton(0, 10, ArmyImage[10]); // Ice Spell
 }
@@ -416,6 +441,12 @@ void PlayScene::UIBtnClicked(int id) {
     
     else if (id == 2)
         preview = new TankArmy(0, 0);
+    
+    else if (id == 3){
+        Engine::LOG() << "Angel Pressed" ;
+        preview = new AngelArmy(0, 0);
+    }
+        
     
     // Spell
     else if (id == 10){

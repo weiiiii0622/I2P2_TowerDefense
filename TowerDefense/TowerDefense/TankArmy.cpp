@@ -26,6 +26,7 @@
 //Army(std::string img, float x, float y, float radius, float coolDown, float speed, float hp, int id, float shootRadius);
 TankArmy::TankArmy(float x, float y) :
     Army("play/enemy-3.png", x, y, 20, 0, 0, 50, 2, 0) {
+        max_HP = 50;
     // Move center downward, since we the army head is slightly biased upward.
     Anchor.y += 8.0f / GetBitmapHeight();
 }
@@ -47,13 +48,22 @@ void TankArmy::Update(float deltaTime) {
 void TankArmy::CreateBullet(Engine::Point pt) {}
 
 void TankArmy::Hit(float damage) {
-    HP -= damage;
-    if (HP <= 0) {
-        //OnExplode();
-        // Remove all Defense's reference to target.
-        for (auto& it: lockedDefenses)
-            it->Target = nullptr;
-        getPlayScene()->ArmyGroup->RemoveObject(objectIterator);
-        //AudioHelper::PlayAudio("explosion.wav");
+    if(damage < 0){
+        if(HP - damage > max_HP) HP = max_HP;
+        else{
+            HP -= damage;
+        }
     }
+    else{
+        HP -= damage;
+        if (HP <= 0) {
+            //OnExplode();
+            // Remove all Defense's reference to target.
+            for (auto& it: lockedDefenses)
+                it->Target = nullptr;
+            getPlayScene()->ArmyGroup->RemoveObject(objectIterator);
+            //AudioHelper::PlayAudio("explosion.wav");
+        }
+    }
+
 }

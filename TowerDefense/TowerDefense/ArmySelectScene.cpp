@@ -17,7 +17,7 @@
 void ArmySelectScene::Initialize() {
     // parameter initialization
     // TODO 2 (1/8): modify the totalArmy amount.
-    totalArmy = 3;
+    totalArmy = 4;
     totalSpell = 1;
     
     // Space status background
@@ -56,6 +56,11 @@ void ArmySelectScene::Initialize() {
     armyAmount[2] = 0;
     armyInitAmount[2] = 4;
     ArmyImage[2] = "play/enemy-3.png";
+    
+    //Angel
+    armyAmount[3] = 0;
+    armyInitAmount[3] = 4;
+    ArmyImage[3] = "play/angel.png";
     
     // Ice Spell
     armyAmount[10] = 2;

@@ -52,6 +52,7 @@ void IceSpell::Update(float deltaTime) {
         getPlayScene()->EffectGroup->AddNewObject(img[6] = new Engine::Sprite("play/snowflake.png", Position.x-PlayScene::BlockSize, Position.y+PlayScene::BlockSize));
         getPlayScene()->EffectGroup->AddNewObject(img[7] = new Engine::Sprite("play/snowflake.png", Position.x, Position.y+PlayScene::BlockSize));
         getPlayScene()->EffectGroup->AddNewObject(img[8] = new Engine::Sprite("play/snowflake.png", Position.x+PlayScene::BlockSize, Position.y+PlayScene::BlockSize));
+        AudioHelper::PlayAudio("ice.wav");
     }
     
     
@@ -81,16 +82,32 @@ void IceSpell::Update(float deltaTime) {
 
     int maxDis = INT_MAX;
     Defense* tgt = nullptr;
-
+    Engine::LOG() << "Ice Spell " <<Position.x/ PlayScene::BlockSize << " " << Position.y/ PlayScene::BlockSize;
     maxDis = INT_MAX;
     for (auto& it : scene->DefenseGroup->GetObjects()) {
-        int dis = ManHattanDistance(it->Position);
+        //int dis = ManHattanDistance(it->Position);
+        
         //Engine::LOG() << "Hi: " << dis;
-        if(dis <= 2){
+        int tgt_x = it->Position.x/ PlayScene::BlockSize;
+        int tgt_y = it->Position.y/ PlayScene::BlockSize;
+        int spell_x = Position.x/ PlayScene::BlockSize;
+        int spell_y = Position.y/ PlayScene::BlockSize;
+//        if(dis <= 2){
+//
+//            tgt->setReload(MAXFLOAT);
+//            lockedDefenses.push_back(tgt);
+//        }
+        
+        if((tgt_x==spell_x&&tgt_y==spell_y) || (tgt_x==spell_x-1&&tgt_y==spell_y-1) || (tgt_x==spell_x&&tgt_y==spell_y-1) || (tgt_x==spell_x+1&&tgt_y==spell_y-1) || (tgt_x==spell_x-1&&tgt_y==spell_y) || (tgt_x==spell_x+1&&tgt_y==spell_y) ||
+           (tgt_x==spell_x-1&&tgt_y==spell_y+1) || (tgt_x==spell_x&&tgt_y==spell_y+1) ||
+           (tgt_x==spell_x+1&&tgt_y==spell_y+1)){
+            
             tgt = dynamic_cast<Defense*>(it);
             tgt->setReload(MAXFLOAT);
             lockedDefenses.push_back(tgt);
         }
+           
+//        Engine::LOG() << tgt->id << ": "<< it->Position.x/ PlayScene::BlockSize << " " << it->Position.y/ PlayScene::BlockSize;
     }
 
 
@@ -118,6 +135,6 @@ void IceSpell::Hit(float damage) {
             getPlayScene()->EffectGroup->RemoveObject(img[i]->GetObjectIterator());
         }
         getPlayScene()->ArmyGroup->RemoveObject(objectIterator);
-        AudioHelper::PlayAudio("explosion.wav");
+        //AudioHelper::PlayAudio("explosion.wav");
     }
 }

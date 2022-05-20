@@ -23,14 +23,17 @@ protected:
     std::list<Army*>::iterator lockedArmyIterator;
 public:
     int id;
+    int max_HP;
     bool isPreview = true;
     bool Enabled = true;
     float reachEndTime;
     Defense* Target = nullptr;
+    Army* Heal_Target = nullptr;
     Engine::Point wallPos;
     bool movingToWall = false;
     int dir = -1;
     std::list<Defense*> lockedDefenses;
+    std::list<Army*> lockedArmies;
     int region;
     
     bool isSlowed = false;
@@ -48,6 +51,7 @@ public:
     
     void ChangeSpeed(float spd);
     float GetSpeed();
+    int GetHP();
 };
 
 #endif /* Army_hpp */

@@ -13,6 +13,7 @@
 
 //Army(std::string img, float x, float y, float radius, float coolDown, float speed, float hp, int id, float shootRadius);
 ArcherArmy::ArcherArmy(int x, int y) : Army("play/warrior.png", x, y, 20, 1, 55, 25, 0, 1.5 * PlayScene::BlockSize) {
+    max_HP = 25;
     // Use bounding circle to detect collision is for simplicity, pixel-perfect collision can be implemented quite easily,
     // and efficiently if we use AABB collision detection first, and then pixel-perfect collision.
 }
