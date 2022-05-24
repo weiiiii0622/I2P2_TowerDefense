@@ -45,6 +45,9 @@ void SettingScene::Terminate() {
 	IScene::Terminate();
 }
 void SettingScene::PlayOnClick(int stage) {
+    if(location == 0)
+        Engine::GameEngine::GetInstance().ChangeScene("stage-select");
+    else if(location == 1)
         Engine::GameEngine::GetInstance().ChangeScene("army-select");
 
 }

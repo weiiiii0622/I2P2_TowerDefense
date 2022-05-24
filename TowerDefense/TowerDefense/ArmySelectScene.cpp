@@ -8,6 +8,7 @@
 #include "ImageButton.hpp"
 #include "Label.hpp"
 #include "PlayScene.hpp"
+#include "Setting_Scene.hpp"
 #include "Point.hpp"
 #include "Resources.hpp"
 #include "Slider.hpp"
@@ -17,6 +18,7 @@
 void ArmySelectScene::Initialize() {
     // parameter initialization
     // TODO 2 (1/8): modify the totalArmy amount.
+    
     totalArmy = 4;
     totalSpell = 1;
     
@@ -24,8 +26,9 @@ void ArmySelectScene::Initialize() {
     AddNewObject(new Engine::Image("play/sand.png", 1250, 0, 336, 896));
     
     // TODO 1 (1/8): Initialize the usedSpace and totalSpace.
+    PlayScene* scene = dynamic_cast<PlayScene*>(Engine::GameEngine::GetInstance().GetScene("play"));
     usedSpace = 0;
-    totalSpace = 5;
+    totalSpace = totalSpaceArray[scene->MapId];
     
     // TODO 1 (2/8): Add the usedSpace and totalSpace to the label.
     AddNewObject(UISpaceUsage = new Engine::Label("Space: "+std::to_string(usedSpace)+"/"+std::to_string(totalSpace), "pirulen.ttf", 30, 1395, 150, 0, 0, 0, 255, 0.5, 0.5));
@@ -74,20 +77,26 @@ void ArmySelectScene::Initialize() {
     Engine::ImageButton* btn;
     
     // Setting button
-    btn = new Engine::ImageButton("stage-select/dirt.png", "stage-select/floor.png", 1300, 450, 190, 80);
+    btn = new Engine::ImageButton("stage-select/dirt.png", "stage-select/floor.png", 1300, 300, 190, 80);
     btn->SetOnClickCallback(std::bind(&ArmySelectScene::PlayOnClick, this, BUTTON_SETTING, -1, 0));
     AddNewControlObject(btn);
-    AddNewObject(new Engine::Label("Setting", "pirulen.ttf", 30, 1395, 490, 0, 0, 0, 255, 0.5, 0.5));
+    AddNewObject(new Engine::Label("Setting", "pirulen.ttf", 30, 1395, 340, 0, 0, 0, 255, 0.5, 0.5));
     
     // TODO 1 (7/8): Create the reset button. You can imitate the enter button construction in the Initialize() function.
     // Suggestion of ImageButton's position setting: x(1300), y(600), w(190), h(80).
     // Suggestion of Label position settings: x(1395), y(640).
     
     // Reset button
-    btn = new Engine::ImageButton("stage-select/dirt.png", "stage-select/floor.png", 1300, 600, 190, 80);
+    btn = new Engine::ImageButton("stage-select/dirt.png", "stage-select/floor.png", 1300, 450, 190, 80);
     btn->SetOnClickCallback(std::bind(&ArmySelectScene::PlayOnClick, this, BUTTON_RESET, -1, 0));
     AddNewControlObject(btn);
-    AddNewObject(new Engine::Label("Reset", "pirulen.ttf", 30, 1395, 640, 0, 0, 0, 255, 0.5, 0.5));
+    AddNewObject(new Engine::Label("Reset", "pirulen.ttf", 30, 1395, 490, 0, 0, 0, 255, 0.5, 0.5));
+    
+    // Back Button
+    btn = new Engine::ImageButton("stage-select/dirt.png", "stage-select/floor.png", 1300, 600, 190, 80);
+    btn->SetOnClickCallback(std::bind(&ArmySelectScene::PlayOnClick, this, BUTTON_BACK, -1, 0));
+    AddNewControlObject(btn);
+    AddNewObject(new Engine::Label("Back", "pirulen.ttf", 30, 1395, 640, 0, 0, 0, 255, 0.5, 0.5));
 
     
     // Enter button
@@ -127,6 +136,9 @@ void ArmySelectScene::PlayOnClick(ButtonType type, int id, int spaceCost) {
         scene->mute = mute;
 
     }
+    else if(type == BUTTON_BACK){
+        Engine::GameEngine::GetInstance().ChangeScene("stage-select");
+    }
     else if (type == BUTTON_RESET) {
         // TODO 1 (8/8): Reset the usedSpace and the amount of every army to 0.
         usedSpace = 0;
@@ -165,6 +177,8 @@ void ArmySelectScene::PlayOnClick(ButtonType type, int id, int spaceCost) {
         Engine::LOG() << "army["<<id<<"] ammount: " << armyAmount[id];
     }
     else if (type == BUTTON_SETTING) {
+        SettingScene* scene = dynamic_cast<SettingScene*>(Engine::GameEngine::GetInstance().GetScene("setting"));
+        scene->location = 1;
         Engine::GameEngine::GetInstance().ChangeScene("setting");
         fromSetting = true;
     }

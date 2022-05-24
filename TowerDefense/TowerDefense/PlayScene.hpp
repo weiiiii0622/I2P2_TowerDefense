@@ -10,6 +10,8 @@
 #include "IScene.hpp"
 #include "Point.hpp"
 
+#define TOTAL_MAP 2
+
 #define MAX_ARMY_AMOUNT 60
 #define MAX_SPELL_AMOUNT 60
 #define WALL_SIZE 4
@@ -51,6 +53,7 @@ protected:
     
 public:
     bool mute;
+    bool init_timer;
 	static bool DebugMode;
 	static const std::vector<Engine::Point> directions;
 	static const int MapWidth, MapHeight;
@@ -77,6 +80,13 @@ public:
     
     std::string SpellImage[MAX_SPELL_AMOUNT];
     Engine::Label *UISpellAmount[MAX_SPELL_AMOUNT];
+    
+    //timer
+    bool out_of_time;
+    int cur_time;
+    int GAME_TIME[TOTAL_MAP + 1] = {-1, 60, 100};
+    Engine::Label *gametTimer;
+    ALLEGRO_TIMER* game_counter;
     
 	Engine::Image* imgTarget;
     Army* preview;

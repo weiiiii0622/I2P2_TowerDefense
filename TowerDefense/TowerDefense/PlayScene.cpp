@@ -70,7 +70,13 @@ void PlayScene::Initialize() {
 	ticks = 0;
 	deathCountDown = -1;
 	SpeedMult = 1;
-    MapId = 1;
+    //MapId = 1;
+    
+    //timer
+    init_timer = false;
+    out_of_time = false;
+    cur_time = 0;
+    game_counter = al_create_timer(1.0f / 60);
 
 	// Add groups from bottom to top.
 	AddNewObject(TileMapGroup = new Group());
@@ -116,7 +122,7 @@ void PlayScene::Update(float deltaTime) {
         }
     }
     if (!ArmyGroup->GetObjects().empty()) armyEmpty = false;
-    if (armyEmpty) {
+    if (armyEmpty || out_of_time) {
         // Release the resources
         
 //        delete TileMapGroup;
@@ -146,6 +152,22 @@ void PlayScene::Update(float deltaTime) {
 //    if (DefenseGroup->GetObjects().empty()) {
 //        Engine::GameEngine::GetInstance().ChangeScene("win");
 //    }
+    
+    if(!init_timer){
+        init_timer = true;
+        AddNewObject(gametTimer = new Engine::Label("Time Left: "+std::to_string(GAME_TIME[MapId]-al_get_timer_count(game_counter)), "pirulen.ttf", 30, 200, 30, 0, 0, 0, 255, 0.5, 0.5));
+        al_start_timer(game_counter);
+    }
+    else{
+        if(al_get_timer_count(game_counter)/60 != cur_time){
+            cur_time = al_get_timer_count(game_counter)/60;
+            gametTimer->Text = "Time Left: "+std::to_string(GAME_TIME[MapId]-cur_time);
+        }
+    }
+    
+    if(cur_time == GAME_TIME[MapId]){
+        out_of_time = true;
+    }
     
     std::list<IObject*> remain_defense = DefenseGroup->GetObjects();
     bool win_flag = true;

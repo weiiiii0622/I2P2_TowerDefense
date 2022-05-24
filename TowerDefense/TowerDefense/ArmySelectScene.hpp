@@ -13,6 +13,7 @@ private:
         BUTTON_ADD,
         BUTTON_SUB,
         BUTTON_RESET,
+        BUTTON_BACK,
         BUTTON_ENTER,
     };
 public:
@@ -22,6 +23,8 @@ public:
     void PlayOnClick(ButtonType type, int id, int spaceCost);
     void AddNewArmy(int id, std::string imageName, int spaceCost);
     void OnKeyDown(int keyCode) override;
+    
+    int totalSpaceArray[TOTAL_MAP + 1] = {-1, 5, 10};
     
     std::string ArmyImage[MAX_ARMY_AMOUNT];
     std::string SpellImage[MAX_SPELL_AMOUNT];

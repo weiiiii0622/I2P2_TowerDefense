@@ -8,6 +8,7 @@ class SettingScene final : public Engine::IScene {
 private:
 	std::shared_ptr<ALLEGRO_SAMPLE_INSTANCE> bgmInstance;
 public:
+    int location; // 0: stage-select, 1: army-select
 	explicit SettingScene() = default;
 	void Initialize() override;
 	void Terminate() override;

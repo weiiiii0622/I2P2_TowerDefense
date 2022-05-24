@@ -8,10 +8,12 @@
 #include "ImageButton.hpp"
 #include "Label.hpp"
 #include "PlayScene.hpp"
+#include "Setting_Scene.hpp"
 #include "Point.hpp"
 #include "Resources.hpp"
 #include "Slider.hpp"
 #include "StageSelectScene.hpp"
+#include "LOG.hpp"
 
 void StageSelectScene::Initialize() {
     int w = Engine::GameEngine::GetInstance().GetScreenSize().x;
@@ -29,6 +31,13 @@ void StageSelectScene::Initialize() {
     btn->SetOnClickCallback(std::bind(&StageSelectScene::PlayOnClick, this, 2));
     AddNewControlObject(btn);
     AddNewObject(new Engine::Label("Stage 2", "pirulen.ttf", 48, halfW, halfH * 3 / 2, 0, 0, 0, 255, 0.5, 0.5));
+    
+    //back
+    btn = new Engine::ImageButton("stage-select/dirt.png", "stage-select/floor.png", w - 225, h - 300, 200, 100);
+    btn->SetOnClickCallback(std::bind(&StageSelectScene::PlayOnClick, this, -2));
+    AddNewControlObject(btn);
+    AddNewObject(new Engine::Label("Back", "pirulen.ttf", 28, w-125, h-250, 0, 0, 0, 255, 0.5, 0.5));
+    
     //setting
     btn = new Engine::ImageButton("stage-select/dirt.png", "stage-select/floor.png", w - 225, h - 150, 200, 100);
     btn->SetOnClickCallback(std::bind(&StageSelectScene::PlayOnClick, this, -1));
@@ -42,13 +51,19 @@ void StageSelectScene::Terminate() {
 	IScene::Terminate();
 }
 void StageSelectScene::PlayOnClick(int stage) {
-    if(stage==-1){
+    Engine::LOG() << "current stage: " << stage;
+    if(stage == -1){
+        SettingScene* scene = dynamic_cast<SettingScene*>(Engine::GameEngine::GetInstance().GetScene("setting"));
+        scene->location = 0;
         Engine::GameEngine::GetInstance().ChangeScene("setting");
+    }
+    else if(stage == -2){
+        Engine::GameEngine::GetInstance().ChangeScene("start-scene");
     }
     else{
         PlayScene* scene = dynamic_cast<PlayScene*>(Engine::GameEngine::GetInstance().GetScene("play"));
         scene->MapId = stage;
-        Engine::GameEngine::GetInstance().ChangeScene("play");
+        Engine::GameEngine::GetInstance().ChangeScene("army-select");
     }
 
 }
