@@ -232,4 +232,5 @@ void ArmySelectScene::OnKeyDown(int keyCode) {
         else
             AudioHelper::ChangeSampleVolume(bgmInstance, 0.0);
     }
+    
 }

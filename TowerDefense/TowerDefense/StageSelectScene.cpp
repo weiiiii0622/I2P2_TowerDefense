@@ -65,7 +65,6 @@ void StageSelectScene::PlayOnClick(int stage) {
         scene->MapId = stage;
         Engine::GameEngine::GetInstance().ChangeScene("army-select");
     }
-
 }
 void StageSelectScene::BGMSlideOnValueChanged(float value) {
     AudioHelper::ChangeSampleVolume(bgmInstance, value);

@@ -312,20 +312,24 @@ void PlayScene::OnKeyDown(int keyCode) {
 	}
 	if (keyCode == ALLEGRO_KEY_Q) {
 		// Hotkey for ArcherArmy.
-		UIBtnClicked(0);
+		if(armyAmount[0]) UIBtnClicked(0);
 	}
 	else if (keyCode == ALLEGRO_KEY_W) {
 		// Hotkey for BombArmy.
-		UIBtnClicked(1);
+        if(armyAmount[1]) UIBtnClicked(1);
 	}
 	else if (keyCode == ALLEGRO_KEY_E) {
 		// Hotkey for ...
-		UIBtnClicked(2);
+        if(armyAmount[2]) UIBtnClicked(2);
 	}
 	else if (keyCode == ALLEGRO_KEY_R) {
 		// Hotkey for ...
-		UIBtnClicked(3);
+        if(armyAmount[3]) UIBtnClicked(3);
 	}
+    else if (keyCode == ALLEGRO_KEY_S) {
+        // Hotkey for ...
+        if(armyAmount[10]) UIBtnClicked(10);
+    }
     else if (keyCode == ALLEGRO_KEY_M) {
         // mute
         mute = !mute;
@@ -493,7 +497,7 @@ bool PlayScene::CheckOccupied(int x, int y) {
         return true;
     
     TileType tt = mapState[y][x];
-    if (tt == TILE_WALL || tt == TILE_CANNON || tt == TILE_ICE_TURRET || tt == TILE_DEATH_TRAP) return true;
+    if (tt == TILE_WALL || tt == TILE_CANNON || tt == TILE_ICE_TURRET) return true;
     
     if (x >= corners[0].x && x <= corners[1].x
         && y >= corners[0].y && y <= corners[2].y
